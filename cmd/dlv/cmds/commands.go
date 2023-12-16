@@ -16,6 +16,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/mattn/go-isatty"
+	"github.com/spf13/cobra"
+
 	"github.com/go-delve/delve/cmd/dlv/cmds/helphelpers"
 	"github.com/go-delve/delve/pkg/config"
 	"github.com/go-delve/delve/pkg/gobuild"
@@ -30,8 +33,6 @@ import (
 	"github.com/go-delve/delve/service/debugger"
 	"github.com/go-delve/delve/service/rpc2"
 	"github.com/go-delve/delve/service/rpccommon"
-	"github.com/mattn/go-isatty"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -941,6 +942,9 @@ func connect(addr string, clientConn net.Conn, conf *config.Config) int {
 }
 
 func execute(attachPid int, processArgs []string, conf *config.Config, coreFile string, kind debugger.ExecuteKind, dlvArgs []string, buildFlags string) int {
+	addr = strings.ReplaceAll(addr, "0.0.0.0:", "127.0.0.1:")
+	fmt.Println("SWAPPING ADDRESS TO: " + addr)
+
 	if err := logflags.Setup(log, logOutput, logDest); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
